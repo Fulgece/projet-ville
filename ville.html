@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ville 3D avec Three.js</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Création de la scène, caméra et rendu
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Ajout d'un éclairage à la scène
+        const light = new THREE.AmbientLight(0x404040); // lumière ambiante
+        scene.add(light);
+
+        // Création de la grille de bâtiments
+        const gridSize = 10;
+        const buildingWidth = 1;
+        const buildingDepth = 1;
+        const buildingHeight = 5;
+
+        for (let x = -gridSize; x < gridSize; x++) {
+            for (let z = -gridSize; z < gridSize; z++) {
+                const buildingHeight = Math.random() * 10 + 2; // hauteur aléatoire
+                const geometry = new THREE.BoxGeometry(buildingWidth, buildingHeight, buildingDepth);
+                const material = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff });
+                const building = new THREE.Mesh(geometry, material);
+                building.position.set(x * 2, buildingHeight / 2, z * 2);
+                scene.add(building);
+            }
+        }
+
+        // Position de la caméra
+        camera.position.z = 30;
+
+        // Animation de la scène
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Rotation de la scène pour un effet dynamique
+            scene.rotation.y += 0.002;
+
+            renderer.render(scene, camera);
+        }
+
+        // Gérer les redimensionnements de la fenêtre
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+
+        animate();
+    </script>
+</body>
+</html>
